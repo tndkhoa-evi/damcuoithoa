@@ -124,7 +124,8 @@
 
   // ---------- RSVP form ----------
   // To enable Google Sheets, set RSVP_ENDPOINT to your Apps Script Web App URL.
-  const RSVP_ENDPOINT = "";
+  const RSVP_ENDPOINT =
+    "https://script.google.com/macros/s/AKfycbwVYfPl4onf9N_OLLa3pb12f_MeZv3FyHmLRlipVT05NY_Kim63rVDp12n0_oOxX-s/exec";
   const form = document.getElementById("rsvp-form");
   const wrap = document.getElementById("rsvp-wrap");
   form.addEventListener("submit", async (e) => {
