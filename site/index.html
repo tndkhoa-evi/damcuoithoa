@@ -166,10 +166,9 @@
           <div class="couple__divider">
             <span class="line"></span>
             <img
-              class="hy-img"
-              src="assets/hy-stylized.png"
-              alt="囍"
-              style="height: 72px; width: auto; display: inline-block"
+              class="couple__divider-logo"
+              src="assets/logo-mark.jpg"
+              alt="T &amp; T"
             />
             <span class="line"></span>
           </div>
@@ -225,8 +224,8 @@
               Nhằm ngày 06 tháng 05 năm Bính Ngọ
             </div>
             <div class="event-card__time">
-              <div>Đón khách: <strong>10:00</strong></div>
-              <div>Khai tiệc: <strong>11:00</strong></div>
+              <div>Đón khách: <strong>09:00</strong></div>
+              <div>Khai tiệc: <strong>10:00</strong></div>
             </div>
             <div class="event-card__place">
               <strong>Tư Gia</strong>
@@ -248,8 +247,8 @@
               Nhằm ngày 10 tháng 05 năm Bính Ngọ
             </div>
             <div class="event-card__time">
-              <div>Đón khách: <strong>17:30</strong></div>
-              <div>Khai tiệc: <strong>18:30</strong></div>
+              <div>Đón khách: <strong>10:00</strong></div>
+              <div>Khai tiệc: <strong>11:00</strong></div>
             </div>
             <div class="event-card__place">
               <strong>KDL Đại Lãnh Beach</strong>
@@ -352,43 +351,7 @@
             <span class="dot"></span><span class="line"></span>
           </div>
         </div>
-        <div class="gallery__grid">
-          <div class="reveal reveal-delay-1 gallery__item gi-a">
-            <div class="img-slot" data-placeholder="Ảnh 01">
-              <img src="images/gallery-a.jpg" alt="" loading="lazy" />
-            </div>
-          </div>
-          <div class="reveal reveal-delay-2 gallery__item gi-b">
-            <div class="img-slot" data-placeholder="Ảnh 02">
-              <img src="images/gallery-b.jpg" alt="" loading="lazy" />
-            </div>
-          </div>
-          <div class="reveal reveal-delay-3 gallery__item gi-c">
-            <div class="img-slot" data-placeholder="Ảnh 03">
-              <img src="images/gallery-c.jpg" alt="" loading="lazy" />
-            </div>
-          </div>
-          <div class="reveal reveal-delay-4 gallery__item gi-d">
-            <div class="img-slot" data-placeholder="Ảnh 04">
-              <img src="images/gallery-d.jpg" alt="" loading="lazy" />
-            </div>
-          </div>
-          <div class="reveal reveal-delay-1 gallery__item gi-e">
-            <div class="img-slot" data-placeholder="Ảnh 05">
-              <img src="images/gallery-e.jpg" alt="" loading="lazy" />
-            </div>
-          </div>
-          <div class="reveal reveal-delay-2 gallery__item gi-f">
-            <div class="img-slot" data-placeholder="Ảnh 06">
-              <img src="images/gallery-f.jpg" alt="" loading="lazy" />
-            </div>
-          </div>
-          <div class="reveal reveal-delay-3 gallery__item gi-g">
-            <div class="img-slot" data-placeholder="Ảnh 07">
-              <img src="images/gallery-g.jpg" alt="" loading="lazy" />
-            </div>
-          </div>
-        </div>
+        <div class="album__grid" id="album-grid"></div>
       </div>
     </section>
 
@@ -543,8 +506,8 @@
             <h2 class="display-lg display-italic">Xác nhận tham dự</h2>
             <p>
               Sự hiện diện của bạn là niềm vinh hạnh lớn nhất của chúng tôi. Hãy
-              giúp gia đình chuẩn bị chu đáo bằng cách xác nhận trước ngày
-              <strong>15 . 06 . 2026</strong>.
+              giúp gia đình chuẩn bị thật chu đáo cho ngày vui bằng cách gửi xác
+              nhận ở ngay phía kế bên nhé.
             </p>
           </div>
           <div class="reveal reveal-delay-1 rsvp__form" id="rsvp-wrap">
@@ -556,15 +519,6 @@
                   name="name"
                   required
                   placeholder="Nguyễn Văn A"
-                />
-              </div>
-              <div class="rsvp__field">
-                <label for="r-phone">Số điện thoại</label>
-                <input
-                  id="r-phone"
-                  name="phone"
-                  required
-                  placeholder="0901 234 567"
                 />
               </div>
               <div class="rsvp__field">
@@ -637,6 +591,29 @@
 
     <!-- PETALS (filled by JS) -->
     <div class="petals" id="petals" aria-hidden="true"></div>
+
+    <!-- LIGHTBOX -->
+    <div class="lightbox" id="lightbox" aria-hidden="true">
+      <button class="lightbox__close" id="lightbox-close" aria-label="Đóng">
+        &times;
+      </button>
+      <button
+        class="lightbox__nav lightbox__nav--prev"
+        id="lightbox-prev"
+        aria-label="Trước"
+      >
+        &#10094;
+      </button>
+      <img class="lightbox__img" id="lightbox-img" alt="" />
+      <button
+        class="lightbox__nav lightbox__nav--next"
+        id="lightbox-next"
+        aria-label="Sau"
+      >
+        &#10095;
+      </button>
+      <div class="lightbox__counter" id="lightbox-counter"></div>
+    </div>
 
     <script src="main.js"></script>
   </body>

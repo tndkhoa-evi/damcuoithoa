@@ -48,8 +48,8 @@
       day: "20",
       address: "Ấp 3, Xã Mỹ An, Tỉnh Tây Ninh",
       times: [
-        ["Đón khách", "10:00"],
-        ["Khai tiệc", "11:00"],
+        ["Đón khách", "09:00"],
+        ["Khai tiệc", "10:00"],
       ],
       mapQuery: "Ấp 3, Mỹ An, Tây Ninh",
     },
@@ -59,8 +59,8 @@
       day: "24",
       address: "Xã Đại Lãnh, Tỉnh Khánh Hòa",
       times: [
-        ["Đón khách", "17:30"],
-        ["Khai tiệc", "18:30"],
+        ["Đón khách", "10:00"],
+        ["Khai tiệc", "11:00"],
       ],
       mapQuery: "Đại Lãnh Beach, Khánh Hòa",
     },
@@ -123,16 +123,29 @@
   });
 
   // ---------- RSVP form ----------
+  // To enable Google Sheets, set RSVP_ENDPOINT to your Apps Script Web App URL.
+  const RSVP_ENDPOINT = "";
   const form = document.getElementById("rsvp-form");
   const wrap = document.getElementById("rsvp-wrap");
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(form).entries());
+    data.at = new Date().toISOString();
     try {
       const all = JSON.parse(localStorage.getItem("rsvp") || "[]");
-      all.push({ ...data, at: new Date().toISOString() });
+      all.push(data);
       localStorage.setItem("rsvp", JSON.stringify(all));
     } catch {}
+    if (RSVP_ENDPOINT) {
+      try {
+        await fetch(RSVP_ENDPOINT, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(data),
+        });
+      } catch {}
+    }
     wrap.innerHTML = `<div class="rsvp__sent">Cảm ơn ${escapeHtml(data.name || "bạn")} thật nhiều!<br />Hẹn gặp ngày vui.</div>`;
   });
   function escapeHtml(s) {
@@ -156,6 +169,67 @@
     if (!el) return;
     const top = el.getBoundingClientRect().top + window.scrollY - 60;
     window.scrollTo({ top, behavior: "smooth" });
+  });
+
+  // ---------- album grid + lightbox ----------
+  const ALBUM_COUNT = 44;
+  const albumGrid = document.getElementById("album-grid");
+  const photos = [];
+  for (let i = 1; i <= ALBUM_COUNT; i++) {
+    const n = String(i).padStart(2, "0");
+    photos.push(`images/album/photo-${n}.jpg`);
+  }
+  const frag2 = document.createDocumentFragment();
+  photos.forEach((src, i) => {
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className = "album__item reveal";
+    item.dataset.index = String(i);
+    item.innerHTML = `<img src="${src}" alt="Ảnh cưới ${i + 1}" loading="lazy" />`;
+    frag2.appendChild(item);
+  });
+  albumGrid.appendChild(frag2);
+  document
+    .querySelectorAll(".album__item.reveal")
+    .forEach((el) => io.observe(el));
+
+  const lb = document.getElementById("lightbox");
+  const lbImg = document.getElementById("lightbox-img");
+  const lbCounter = document.getElementById("lightbox-counter");
+  let lbIndex = 0;
+  const openLb = (i) => {
+    lbIndex = (i + photos.length) % photos.length;
+    lbImg.src = photos[lbIndex];
+    lbCounter.textContent = `${lbIndex + 1} / ${photos.length}`;
+    lb.classList.add("open");
+    lb.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+  };
+  const closeLb = () => {
+    lb.classList.remove("open");
+    lb.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  };
+  albumGrid.addEventListener("click", (e) => {
+    const btn = e.target.closest(".album__item");
+    if (!btn) return;
+    openLb(Number(btn.dataset.index));
+  });
+  document.getElementById("lightbox-close").addEventListener("click", closeLb);
+  document
+    .getElementById("lightbox-prev")
+    .addEventListener("click", () => openLb(lbIndex - 1));
+  document
+    .getElementById("lightbox-next")
+    .addEventListener("click", () => openLb(lbIndex + 1));
+  lb.addEventListener("click", (e) => {
+    if (e.target === lb) closeLb();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (!lb.classList.contains("open")) return;
+    if (e.key === "Escape") closeLb();
+    if (e.key === "ArrowLeft") openLb(lbIndex - 1);
+    if (e.key === "ArrowRight") openLb(lbIndex + 1);
   });
 
   // ---------- petals rain ----------
