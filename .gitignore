@@ -1,0 +1,19 @@
+# Raw wedding photos (~520MB, GitHub-incompatible)
+File hình cưới/
+
+# Loose originals at repo root
+ThiepMoi.jpg
+z7820550256384_*.jpg
+z7820556032868_*.jpg
+
+# Design bundle zip (the unzipped folder is committed)
+*.zip
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*.swo
