@@ -275,4 +275,223 @@
     }
     petals.appendChild(frag);
   }
+
+  // ---------- hamburger nav ----------
+  const burger = document.getElementById("nav-burger");
+  const navLinks = document.getElementById("nav-links");
+  if (burger && navLinks) {
+    const closeNav = () => {
+      burger.classList.remove("open");
+      navLinks.classList.remove("open");
+      burger.setAttribute("aria-expanded", "false");
+    };
+    burger.addEventListener("click", () => {
+      const open = burger.classList.toggle("open");
+      navLinks.classList.toggle("open", open);
+      burger.setAttribute("aria-expanded", String(open));
+    });
+    navLinks
+      .querySelectorAll("a")
+      .forEach((a) => a.addEventListener("click", closeNav));
+  }
+
+  // ---------- per-event calendar/direction data ----------
+  // Each event: ISO start (Asia/Bangkok = +07:00), title, location, address, mapUrl
+  const EVENT_META = [
+    {
+      title: "Lễ Vu Quy · Trí & Thoa",
+      start: "2026-06-20T09:00:00+07:00",
+      end: "2026-06-20T13:00:00+07:00",
+      location: "Tư Gia · Ấp 3, Mỹ An, Tây Ninh",
+      mapUrl:
+        "https://www.google.com/maps/search/?api=1&query=10.574100%2C106.352776",
+    },
+    {
+      title: "Lễ Tân Hôn · Trí & Thoa",
+      start: "2026-06-24T10:00:00+07:00",
+      end: "2026-06-24T14:00:00+07:00",
+      location: "KDL Đại Lãnh Beach · Đại Lãnh, Khánh Hòa",
+      mapUrl:
+        "https://www.google.com/maps/search/?api=1&query=" +
+        encodeURIComponent("Đại Lãnh Beach, Khánh Hòa"),
+    },
+    {
+      title: "Lễ Báo Hỷ · Trí & Thoa",
+      start: "2026-06-28T18:00:00+07:00",
+      end: "2026-06-28T22:00:00+07:00",
+      location:
+        "Le Jardin · Sảnh Camellia A3, 195 Quốc Lộ 13, Hiệp Bình Chánh, Thủ Đức, TP. HCM",
+      mapUrl:
+        "https://www.google.com/maps/search/?api=1&query=" +
+        encodeURIComponent("Le Jardin 195 Quốc Lộ 13 Hiệp Bình Chánh Thủ Đức"),
+    },
+  ];
+
+  const toIcsDate = (iso) =>
+    new Date(iso)
+      .toISOString()
+      .replace(/[-:]/g, "")
+      .replace(/\.\d{3}/, "");
+  const icsEscape = (s) =>
+    String(s)
+      .replace(/[\\,;]/g, (c) => "\\" + c)
+      .replace(/\n/g, "\\n");
+  const downloadIcs = (idx) => {
+    const m = EVENT_META[idx];
+    const uid = `${idx}-${Date.now()}@trithoa-wedding`;
+    const ics = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//Tri Thoa Wedding//VI",
+      "CALSCALE:GREGORIAN",
+      "METHOD:PUBLISH",
+      "BEGIN:VEVENT",
+      `UID:${uid}`,
+      `DTSTAMP:${toIcsDate(new Date().toISOString())}`,
+      `DTSTART:${toIcsDate(m.start)}`,
+      `DTEND:${toIcsDate(m.end)}`,
+      `SUMMARY:${icsEscape(m.title)}`,
+      `LOCATION:${icsEscape(m.location)}`,
+      `DESCRIPTION:${icsEscape("Đám cưới Phạm Nhật Trí & Trịnh Kim Thoa. " + m.mapUrl)}`,
+      "END:VEVENT",
+      "END:VCALENDAR",
+    ].join("\r\n");
+    const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${m.title.replace(/[^\p{L}\d]+/gu, "-")}.ics`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  };
+
+  // Wire event-card action buttons
+  document.querySelectorAll("[data-cal-idx]").forEach((btn) => {
+    btn.addEventListener("click", () =>
+      downloadIcs(Number(btn.dataset.calIdx)),
+    );
+  });
+  document.querySelectorAll("[data-dir-idx]").forEach((a) => {
+    a.href = EVENT_META[Number(a.dataset.dirIdx)].mapUrl;
+  });
+
+  // ---------- calendar modal (from mobile sticky CTA) ----------
+  const calModal = document.getElementById("cal-modal");
+  const calList = document.getElementById("cal-list");
+  const calOpen = document.getElementById("cal-open");
+  const calClose = document.getElementById("cal-close");
+  if (calList) {
+    EVENT_META.forEach((m, i) => {
+      const item = document.createElement("button");
+      item.type = "button";
+      item.className = "cal-item";
+      const d = new Date(m.start);
+      const dayStr = `${String(d.getUTCDate() + (d.getUTCHours() < 17 ? 0 : 0)).padStart(2, "0")}.06.2026`;
+      item.innerHTML = `
+        <span>
+          <span class="cal-item__name">${m.title.split(" · ")[0]}</span><br>
+          <span class="cal-item__date">${EVENTS[i].day}.06.2026 · ${EVENTS[i].times[1][1]}</span>
+        </span>
+        <span class="cal-item__icon">📥</span>`;
+      item.addEventListener("click", () => downloadIcs(i));
+      calList.appendChild(item);
+    });
+  }
+  const openCalModal = () => {
+    calModal.classList.add("open");
+    calModal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+  };
+  const closeCalModal = () => {
+    calModal.classList.remove("open");
+    calModal.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  };
+  if (calOpen) calOpen.addEventListener("click", openCalModal);
+  if (calClose) calClose.addEventListener("click", closeCalModal);
+  if (calModal)
+    calModal.addEventListener("click", (e) => {
+      if (e.target === calModal) closeCalModal();
+    });
+
+  // ---------- map accordion (mobile) ----------
+  const acc = document.getElementById("map-accordion");
+  if (acc) {
+    EVENTS.forEach((e, i) => {
+      const item = document.createElement("div");
+      item.className = "map__acc-item" + (i === 2 ? " open" : "");
+      const q = encodeURIComponent(e.mapQuery);
+      const mapUrl = `https://www.google.com/maps/search/?api=1&query=${q}`;
+      item.innerHTML = `
+        <button class="map__acc-head" type="button">
+          <span><strong>${e.place}</strong> · ${e.day}.06.2026</span>
+        </button>
+        <div class="map__acc-body">
+          <iframe class="map__acc-iframe" title="Map ${e.place}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src=""></iframe>
+          <div class="map__acc-addr">${e.address}</div>
+          <div class="map__acc-times">${e.times.map(([l, t]) => `<div>${l}: <strong>${t}</strong></div>`).join("")}</div>
+          <a class="map__acc-cta" href="${mapUrl}" target="_blank" rel="noopener">🧭 Chỉ đường</a>
+        </div>`;
+      acc.appendChild(item);
+      const iframe = item.querySelector(".map__acc-iframe");
+      // lazy-load map iframe only when first opened
+      const loadIframe = () => {
+        if (!iframe.src)
+          iframe.src = `https://www.google.com/maps?q=${q}&output=embed`;
+      };
+      if (i === 2) loadIframe();
+      item.querySelector(".map__acc-head").addEventListener("click", () => {
+        const wasOpen = item.classList.contains("open");
+        item.classList.toggle("open");
+        if (!wasOpen) loadIframe();
+      });
+    });
+  }
+
+  // ---------- mobile sticky CTA show/hide ----------
+  const mobileCta = document.getElementById("mobile-cta");
+  const rsvpSection = document.getElementById("rsvp");
+  if (mobileCta && rsvpSection) {
+    const ctaScroll = () => {
+      const scrolled = window.scrollY > 400;
+      const rsvpTop = rsvpSection.getBoundingClientRect().top;
+      const inRsvp = rsvpTop < window.innerHeight - 80;
+      mobileCta.classList.toggle("show", scrolled && !inRsvp);
+      mobileCta.setAttribute(
+        "aria-hidden",
+        scrolled && !inRsvp ? "false" : "true",
+      );
+    };
+    window.addEventListener("scroll", ctaScroll, { passive: true });
+    ctaScroll();
+  }
+
+  // ---------- lightbox swipe gestures ----------
+  if (lb) {
+    let tx = 0;
+    let ty = 0;
+    lb.addEventListener(
+      "touchstart",
+      (e) => {
+        const t = e.changedTouches[0];
+        tx = t.clientX;
+        ty = t.clientY;
+      },
+      { passive: true },
+    );
+    lb.addEventListener(
+      "touchend",
+      (e) => {
+        const t = e.changedTouches[0];
+        const dx = t.clientX - tx;
+        const dy = t.clientY - ty;
+        if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+          openLb(lbIndex + (dx < 0 ? 1 : -1));
+        }
+      },
+      { passive: true },
+    );
+  }
 })();
