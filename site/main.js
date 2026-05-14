@@ -22,7 +22,7 @@
   document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
 
   // ---------- countdown ----------
-  const target = new Date("2026-06-28T18:00:00+07:00").getTime();
+  const target = new Date("2026-06-24T10:00:00+07:00").getTime();
   const cd = {
     days: document.querySelector('[data-unit="days"]'),
     hours: document.querySelector('[data-unit="hours"]'),
@@ -51,7 +51,7 @@
         ["Đón khách", "09:00"],
         ["Khai tiệc", "10:00"],
       ],
-      mapQuery: "Ấp 3, Mỹ An, Tây Ninh",
+      mapQuery: "10.574100,106.352776",
     },
     {
       place: "KDL Đại Lãnh Beach",
