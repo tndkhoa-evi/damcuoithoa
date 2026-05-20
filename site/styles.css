@@ -266,7 +266,7 @@ h3,
 }
 .hero__inner {
   display: grid;
-  grid-template-columns: 1.05fr 1fr;
+  grid-template-columns: 1fr 1.15fr;
   gap: 64px;
   align-items: center;
   width: 100%;
@@ -339,6 +339,9 @@ h3,
   background: var(--bg-card);
   box-shadow: var(--shadow-lg);
   overflow: hidden;
+}
+.hero__photo-frame .img-slot > img {
+  object-position: 72% center;
 }
 .hero__photo-frame::after {
   content: "";
