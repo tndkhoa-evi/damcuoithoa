@@ -10,6 +10,9 @@ logo.jpg
 # Design bundle zip (the unzipped folder is committed)
 *.zip
 
+# Large video files (hosted on YouTube instead)
+site/images/video.mp4
+
 # OS / editor
 .DS_Store
 Thumbs.db
