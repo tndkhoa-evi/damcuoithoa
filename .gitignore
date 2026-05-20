@@ -13,6 +13,13 @@ logo.jpg
 # Large video files (hosted on YouTube instead)
 site/images/video.mp4
 
+# Local debugging artifacts
+node_modules/
+package.json
+package-lock.json
+debug-*.png
+mobile-*.png
+
 # OS / editor
 .DS_Store
 Thumbs.db
